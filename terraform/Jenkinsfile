@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kjaindevops/Terraform_Jenkins.git']])
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                script {
+                    sh 'pwd'
+                    sh 'ls -ltrh'
+                    sh 'cd $WORKSPACE/terraform'
+                    sh 'ls -ltrh'
+                    sh 'terraform init'
+                }
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                script {
+                    sh 'terraform plan -out=tfplan'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
